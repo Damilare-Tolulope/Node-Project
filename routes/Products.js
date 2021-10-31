@@ -66,7 +66,8 @@ router.route('/:id').post((req, res) => {
                 .then( () => res.json("Product updated"))
                 .catch( err => res.status(400).json("Error: " +err) )
         })
-
+            
+        .catch( err => res.status(400).json("Error: " +err) )
 })
 
 module.exports = router
