@@ -2,18 +2,24 @@ const express = require('express');
 const router = express.Router()
 const Product = require('../models/Products')
 
+
+// Get all products
 router.route('/').get((req, res) => {
     Product.find()
         .then(products => res.json(products))
         .catch(err => res.status(400).json("Error : " + err))
 })
 
+
+// Get one product by id
 router.route('/:id').get((req, res) => {
     Product.findById(req.params.id)
         .then(product => res.json(product))
         .catch(err => res.status(400).json("Error : " + err))
 })
 
+
+// Add new product
 router.route('/add').post((req, res) => {
     const name = req.body.name;
     const price = req.body.price;
@@ -21,7 +27,6 @@ router.route('/add').post((req, res) => {
     const quantity = req.body.quantity;
     const stock = req.body.stock;
     const image = req.body.image;
-
 
     const newProduct = new Product({
         name,
@@ -33,16 +38,20 @@ router.route('/add').post((req, res) => {
     })
 
     newProduct.save()
-        .then(() => res.json("Added"))
+        .then(() => res.json("Product Added"))
         .catch( err => res.status(400).json("Error :" + err))
 })
 
+
+// Delete one products
 router.route('/:id').delete((req, res)=> {
     Product.findByIdAndRemove(req.params.id)
         .then(() => res.json("Product Removed"))
         .catch(err => res.status(400).json("Error : " +err))
 })
 
+
+// Update product
 router.route('/:id').post((req, res) => {
     Product.findById(req.params.id)
         .then(product => {

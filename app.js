@@ -5,6 +5,8 @@ const productRouter = require('./routes/Products')
 const userRouter = require('./routes/Users')
 
 const app = express();
+
+// Use middlewares
 app.use(express.json());
 
 app.get('/', (req, res) => {
@@ -19,8 +21,11 @@ connection.once('open', () => {
     console.log("Connected to the database successfully");
 })
 
+
+// Routes
 app.use('/products', productRouter)
 app.use('/users', userRouter)
+
 
 // Listen to a port
 const port = process.env.PORT || 5000
