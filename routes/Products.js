@@ -52,7 +52,7 @@ router.route('/:id').delete((req, res)=> {
 
 
 // Update product
-router.route('/:id').post((req, res) => {
+router.route('/update/:id').post((req, res) => {
     Product.findById(req.params.id)
         .then(product => {
             product.name = req.body.name,

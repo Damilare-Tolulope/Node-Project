@@ -45,7 +45,7 @@ router.route('/add').post((req, res) => {
 
 
 // Update user
-router.route('/update/:userId').update((req, res) => {
+router.route('/update/:userId').post((req, res) => {
     User.findById(req.params.userId)
         .then(user => {
             user.username = req.body.username,
