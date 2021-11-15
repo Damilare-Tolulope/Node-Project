@@ -1,14 +1,30 @@
 const express = require('express');
 const router = express.Router()
 const Product = require('../models/Products')
+const verifyToken = require('./Auth')
+const jwt = require('jsonwebtoken')
 
+router.get('/', verifyToken, (req, res) => {  
+    console.log("What : " + req.body)
+    jwt.verify(req.token, process.env.JWT_SECRET_KEY, (err, authData) => {
+      if(err) {
+        res.sendStatus(403);
+        console.log(err)
+      } else {
+        res.json({
+          message: 'Post created...',
+          authData
+        });
+      }
+    });
+  });
 
 // Get all products
-router.route('/').get((req, res) => {
-    Product.find()
-        .then(products => res.json(products))
-        .catch(err => res.status(400).json("Error : " + err))
-})
+// router.route('/').get((req, res) => {
+//     Product.find()
+//         .then(products => res.json(products))
+//         .catch(err => res.status(400).json("Error : " + err))
+// })
 
 
 // Get one product by id

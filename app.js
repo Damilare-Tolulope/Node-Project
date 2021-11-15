@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 require('dotenv').config()
+const authRouter = require('./routes/Auth')
 const productRouter = require('./routes/Products')
 const userRouter = require('./routes/Users')
 
@@ -23,10 +24,11 @@ connection.once('open', () => {
 
 
 // Routes
+app.use('/auth', authRouter)
 app.use('/products', productRouter)
 app.use('/users', userRouter)
 
 
 // Listen to a port
 const port = process.env.PORT || 5000
-app.listen(port, () => console.log(`running on port ${port}`))
+app.listen(port, () => console.log(`Server running on port ${port}`))
