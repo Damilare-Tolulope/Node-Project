@@ -4,6 +4,7 @@ require('dotenv').config()
 const authRouter = require('./routes/Auth')
 const productRouter = require('./routes/Products')
 const userRouter = require('./routes/Users')
+const cartRouter = require('./routes/Cart')
 
 const app = express();
 
@@ -27,6 +28,7 @@ connection.once('open', () => {
 app.use('/auth', authRouter)
 app.use('/products', productRouter)
 app.use('/users', userRouter)
+app.use('/cart', cartRouter)
 
 
 // Listen to a port
