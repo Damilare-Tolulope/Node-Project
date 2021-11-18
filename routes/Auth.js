@@ -5,69 +5,53 @@ const User = require('../models/User')
 
 const app = express();
 
-app.get('/test', (req, res)=>{
-    res.json({message:"This is a test"})
-})
-
-
-
-// app.get('/', verifyToken, (req, res) => {  
-//     jwt.verify(req.token, process.env.JWT_SECRET_KEY, (err, authData) => {
-//       if(err) {
-//         res.sendStatus(403);
-//         console.log(err)
-//       } else {
-//         res.json({
-//           message: 'Authed page with token and details...',
-//           authData
-//         });
-//       }
-//     });
-//   });
-
 
 app.post('/login', (req, res) => {
 
     const user =  {
         username: req.body.username,
         email : req.body.email,
-        password: req.body.password
+        password: req.body.password,
+        admin: req.body.admin
     }
-    // const { username, email, password } = req.body
-    // const user = User.findOne({ email })
-    // if (user && (bcrypt.compare(password, user.password))){
-        jwt.sign({user}, process.env.JWT_SECRET_KEY, { expiresIn: '1h' }, (err, token) => {
-            res.json({
-            token
-            });
-        });
-    // }
+
+
+    User.findOne({ username: req.body.username })
+     .then(result => {
+        const userdb = result;
+
+        user && (bcrypt.compare(user.password, userdb.password, (err, response) => {
+
+
+            if (user.username === userdb.username && user.email === userdb.email && userdb.admin && response){
+                jwt.sign({userdb}, process.env.JWT_SECRET_KEY, { expiresIn: '1m' }, (err, token) => {
+                    // Generate admin token
+                    console.log("Admin token generated")
+                    res.json({
+                        adminToken : token
+                    });
+                });
+            }
+            else if (user.username === userdb.username && user.email === userdb.email && !userdb.admin && response) {
+                jwt.sign({userdb}, process.env.JWT_SECRET_KEY, { expiresIn: '1m' }, (err, token) => {
+                    // Generate user token
+                    console.log("User token generated")
+                    res.json({
+                        userToken : token
+                    });
+                });
+            }
+            else{
+                console.log("No token generated")
+                res.json({message : "Incorrect details"})
+            }
+        }))
+
+     })
+     .catch(err => res.json({Error: "Invalid details"}))
+
+    
 
 })
 
-// FORMAT OF TOKEN
-// Authorization: Bearer <access_token>
-
-// Verify Token
-function verifyToken(req, res, next){
-    // Get auth header value
-    const bearerHeader = req.headers['authorization'];
-    // Check if bearer is undefined
-    if(typeof bearerHeader !== 'undefined') {
-      // Split at the space
-      const bearer = bearerHeader.split(' ');
-      // Get token from array
-      const bearerToken = bearer[1];
-      // Set the token
-      req.token = bearerToken;
-      // Next middleware
-      next();
-    } else {
-      // Forbidden
-      res.sendStatus(403);
-    }
-  
-  }
-
-module.exports = verifyToken
 module.exports = app

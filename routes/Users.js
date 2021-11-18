@@ -1,28 +1,32 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User')
-const verifyToken = require('./Auth')
+const verifyToken = require('../middlewares/verifyAuth')
 const jwt = require('jsonwebtoken')
 
-router.get('/', verifyToken, (req, res) => {  
-    jwt.verify(req.token, process.env.JWT_SECRET_KEY, (err, authData) => {
-      if(err) {
-        res.sendStatus(403);
-      } else {
-        res.json({
-          message: 'Post created...',
-          authData
-        });
-      }
-    });
-  });
+// router.get('/', verifyToken, (req, res) => {  
+//     jwt.verify(req.token, process.env.JWT_SECRET_KEY, (err, authData) => {
+//       if(err) {
+//         res.sendStatus(403);
+//       } else {
+//         if(authData.userdb.admin){
+//           User.find()
+//             .then(users => res.json(users))
+//             .catch(err => res.status(400).json("Error : " + err))
+//         }else{
+//           res.sendStatus(401)
+//         }
+//       }
+//     });
+//   });
+
 
 // Get all users
-// router.route('/').get((req, res) => {
-//     User.find()
-//         .then(users => res.json(users))
-//         .catch(err => res.status(400).json("Error : " + err))
-// })
+router.route('/').get((req, res) => {
+    User.find()
+        .then(users => res.json(users))
+        .catch(err => res.status(400).json("Error : " + err))
+})
 
 
 // Get one user by id
@@ -46,16 +50,24 @@ router.route('/add').post((req, res) => {
     const username = req.body.username
     const password = req.body.password
     const email = req.body.email
+    const admin = req.body.admin
 
-    const newUser = new User({
-        username,
-        password,
-        email
-    })
+    if(username && password && email){
+      const newUser = new User({
+          username,
+          password,
+          email,
+          admin
+      })
+  
+      newUser.save()
+          .then( () => res.json("User added"))
+          .catch(err => res.status(400).json("Error : " + err))
 
-    newUser.save()
-        .then( () => res.json("User added"))
-        .catch(err => res.status(400).json("Error : " + err))
+    }else{
+      res.json({error: "Your details ins't complete"})
+    }
+
 })
 
 
