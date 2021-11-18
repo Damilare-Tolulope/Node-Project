@@ -23,7 +23,8 @@ const userSchema = new Schema({
         index : true,
         match: [/\S+@\S+\.\S+/, 'is invalid'], 
 
-    }
+    },
+    admin : Boolean
 }, {
     timestamps : true
 })
